@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b6b4b"><meta name="description" content="Gerador, conferidor e análise histórica da Lotofácil.">
+<link rel="manifest" href="manifest.json"><link rel="stylesheet" href="style.css">
+<title>Lotofácil Completo</title>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><div class="logo">LF</div><div><h1>Lotofácil Completo</h1><p>Gerador · Conferidor · Estatísticas</p></div></div>
+  <div class="head-actions"><button id="refresh" class="secondary">Atualizar histórico</button><span id="dataStatus" class="status">Carregando histórico…</span></div>
+</header>
+<main>
+<nav class="tabs" aria-label="Seções">
+<button class="tab active" data-tab="gerar">Gerar jogos</button><button class="tab" data-tab="conferir">Conferir resultado</button><button class="tab" data-tab="estatisticas">Estatísticas</button><button class="tab" data-tab="validar">Teste histórico</button>
+</nav>
+<section id="gerar" class="panel active">
+  <div class="section-head"><div><h2>Monte seus jogos</h2><p>Gere combinações válidas de 15 dezenas entre 1 e 25.</p></div><span class="pill">Mobile-first</span></div>
+  <div class="grid two">
+    <label>Quantidade de jogos <input id="qty" type="number" min="1" max="100" value="10"></label>
+    <label>Estratégia <select id="strategy"><option value="balanced">Equilibrada (histórico + diversidade)</option><option value="random">Aleatória uniforme</option><option value="frequency">Frequência histórica (experimental)</option></select></label>
+    <label>Janela histórica <select id="window"><option value="50">Últimos 50 concursos</option><option value="100">Últimos 100 concursos</option><option value="200" selected>Últimos 200 concursos</option><option value="500">Últimos 500 concursos</option><option value="all">Todo o histórico disponível</option></select></label>
+    <label>Limite de repetição entre jogos <select id="overlap"><option value="15">Sem limite adicional</option><option value="12">Máximo 12 dezenas em comum</option><option value="11" selected>Máximo 11 dezenas em comum</option><option value="10">Máximo 10 dezenas em comum</option></select></label>
+  </div>
+  <div class="notice"><strong>Importante:</strong> filtros e frequências organizam as combinações, mas não preveem sorteios nem aumentam a probabilidade matemática de uma aposta simples específica.</div>
+  <button id="generate" class="primary big">Gerar jogos</button>
+  <div id="genSummary" class="summary" aria-live="polite"></div>
+  <div id="tickets" class="tickets"></div>
+  <div class="actions"><button id="copy" class="secondary">Copiar jogos</button><button id="csv" class="secondary">Exportar CSV</button><button id="clear" class="ghost">Limpar</button></div>
+</section>
+<section id="conferir" class="panel">
+  <div class="section-head"><div><h2>Conferir um resultado</h2><p>Informe as 15 dezenas sorteadas para comparar com seus jogos gerados.</p></div></div>
+  <label>Dezenas sorteadas (separadas por espaço, vírgula ou ponto) <textarea id="drawInput" rows="3" placeholder="Ex.: 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15"></textarea></label>
+  <div class="grid two"><label>Número do concurso (opcional) <input id="drawContest" type="number" min="1" placeholder="Ex.: 3808"></label><label>Ou carregar um concurso do histórico <input id="loadContest" type="number" min="1" placeholder="Número do concurso"></label></div>
+  <div class="actions"><button id="loadDraw" class="secondary">Carregar concurso</button><button id="check" class="primary">Conferir jogos atuais</button></div>
+  <div id="checkResults"></div>
+</section>
+<section id="estatisticas" class="panel">
+  <div class="section-head"><div><h2>Estatísticas históricas</h2><p>Descrição do histórico disponível, sem inferência de resultados futuros.</p></div></div>
+  <div id="statCards" class="cards"></div>
+  <div class="grid two">
+    <div class="card"><h3>Frequência por dezena</h3><p class="muted">Quantidade de concursos em que cada dezena apareceu.</p><div id="frequency" class="bars"></div></div>
+    <div class="card"><h3>Último concurso carregado</h3><div id="latest"></div><h3 class="spaced">Paridade dos resultados</h3><div id="parity"></div></div>
+  </div>
+  <p class="footnote">Em um sorteio justo, cada dezena tem probabilidade teórica de 15/25 = 60% de aparecer em cada concurso. Frequências passadas variam naturalmente e não indicam que uma dezena esteja “devendo” ou seja garantida no próximo sorteio.</p>
+</section>
+<section id="validar" class="panel">
+  <div class="section-head"><div><h2>Teste retrospectivo</h2><p>Compara uma estratégia histórica com jogos aleatórios no mesmo conjunto de concursos.</p></div></div>
+  <div class="notice">O teste usa somente concursos anteriores ao resultado avaliado (walk-forward). É uma avaliação retrospectiva, não uma previsão. A variação natural dos sorteios pode produzir diferenças por acaso.</div>
+  <div class="grid two"><label>Concursos finais a testar <select id="btN"><option value="30">30</option><option value="60" selected>60</option><option value="100">100</option><option value="200">200</option></select></label><label>Jogos por concurso <select id="btK"><option value="1">1 jogo</option><option value="5">5 jogos</option><option value="10" selected>10 jogos</option><option value="20">20 jogos</option></select></label></div>
+  <button id="backtest" class="primary">Executar teste</button><div id="btResult"></div>
+</section>
+<section class="disclaimer card">
+<h3>Probabilidades e custo</h3>
+<p>Uma aposta simples de 15 dezenas tem chance de <strong>1 em 3.268.760</strong> de acertar 15 números. Aumentar a quantidade de jogos distintos aumenta a cobertura proporcionalmente, mas também aumenta o custo. Aposta mínima: consulte o preço atualizado no portal oficial da CAIXA antes de apostar.</p>
+<p>Este aplicativo não promete prêmio nem lucro. Defina um limite de gasto e não use dinheiro necessário para despesas essenciais.</p>
+<p class="small">Histórico incluído no pacote: concurso 1 até o último registro disponível na planilha fornecida. Use “Atualizar histórico” quando estiver conectado à internet. Se o navegador bloquear o acesso à API da CAIXA, a atualização poderá falhar; o gerador e as estatísticas continuam funcionando com a base local.</p>
+</section>
+</main>
+<footer>Lotofácil Completo · ferramenta estatística de apoio · sem garantia de resultado</footer>
+<script src="app.js"></script>
+</body></html>
